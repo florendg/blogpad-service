@@ -45,7 +45,7 @@ class PostStoreTest {
     }
 
     @Test
-    void shouldSaveAndReadPost() throws Exception {
+    void shouldSaveAndReadPost()  {
         Post expected = new Post("demo","Hello, Duke!");
         cut.save(expected);
         Post actual = cut.read("demo");

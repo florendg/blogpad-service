@@ -31,13 +31,17 @@ public class PostStore {
             String stringified = serialize(post);
             write(post.title, stringified);
         } catch (Exception exception) {
-            throw new IllegalStateException("Failed to save " + post.title);
+            throw new PostStoreException("Failed to save " + post.title, exception);
         }
     }
 
-    public Post read(final @NotNull String title) throws  Exception{
-        String stringified  = readString(title);
-        return deserialize(stringified);
+    public Post read(final @NotNull String title) {
+        try {
+            String stringified = readString(title);
+            return deserialize(stringified);
+        } catch (Exception exception) {
+            throw new PostStoreException("Failed to find " + title + ". ", exception);
+        }
     }
 
     void write(final @NotNull String fileName, final @NotNull String content) throws IOException {
