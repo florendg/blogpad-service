@@ -28,7 +28,7 @@ public class PostStore {
 
     public void save(final @NotNull Post post) {
         try {
-            String stringified = serialize(post);
+            var stringified = serialize(post);
             write(post.title, stringified);
         } catch (Exception exception) {
             throw new PostStoreException("Failed to save " + post.title, exception);
@@ -37,7 +37,7 @@ public class PostStore {
 
     public Post read(final @NotNull String title) {
         try {
-            String stringified = readString(title);
+            var stringified = readString(title);
             return deserialize(stringified);
         } catch (Exception exception) {
             throw new PostStoreException("Failed to find " + title + ". ", exception);
@@ -45,12 +45,12 @@ public class PostStore {
     }
 
     void write(final @NotNull String fileName, final @NotNull String content) throws IOException {
-        Path path = this.storageDirectoryPath.resolve(fileName);
+        var path = this.storageDirectoryPath.resolve(fileName);
         Files.writeString(path, content);
     }
 
     String readString(final @NotNull String fileName) throws IOException {
-        Path path = this.storageDirectoryPath.resolve(fileName);
+        var path = this.storageDirectoryPath.resolve(fileName);
         return Files.readString(path);
     }
 
