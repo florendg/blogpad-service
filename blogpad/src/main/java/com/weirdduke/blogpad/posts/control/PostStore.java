@@ -1,7 +1,10 @@
 package com.weirdduke.blogpad.posts.control;
 
 import com.weirdduke.blogpad.posts.entity.Post;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 import javax.json.bind.Jsonb;
 import javax.validation.constraints.NotNull;
 
@@ -13,14 +16,46 @@ import static javax.json.bind.JsonbBuilder.create;
 
 public class PostStore {
 
+    @Inject
+    @ConfigProperty(name = "root.storage.dir")
+    String storageDir;
+    Path storageDirectoryPath;
+
+    @PostConstruct
+    void init() {
+        this.storageDirectoryPath = Path.of(storageDir);
+    }
+
+    public void save(final @NotNull Post post) throws Exception {
+        String stringified = serialize(post);
+        write(post.title, stringified);
+    }
+
+    public Post read(final @NotNull String title) throws  Exception{
+        String stringified  = readString(title);
+        return deserialize(stringified);
+    }
+
     void write(final @NotNull String fileName, final @NotNull String content) throws IOException {
-        Path path = Path.of(fileName);
+        Path path = this.storageDirectoryPath.resolve(fileName);
         Files.writeString(path, content);
     }
 
-    public String serialize(final @NotNull Post post) {
-        Jsonb jsonb = create();
-        return jsonb.toJson(post);
+    String readString(final @NotNull String fileName) throws IOException {
+        Path path = this.storageDirectoryPath.resolve(fileName);
+        return Files.readString(path);
+    }
+
+    String serialize(final @NotNull Post post) throws Exception {
+        try (Jsonb jsonb = create()) {
+            return jsonb.toJson(post);
+        }
+    }
+
+    Post deserialize(final @NotNull String stringified) throws Exception {
+        try (Jsonb jsonb = create()) {
+            return jsonb.fromJson(stringified, Post.class);
+        }
     }
 
 }
