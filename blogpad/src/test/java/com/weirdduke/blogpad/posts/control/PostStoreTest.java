@@ -38,12 +38,7 @@ class PostStoreTest {
 
     @Test
     void shouldDeserializeStringIntoPost() throws Exception{
-        String json = """
-            {
-                "title": "serialized",
-                "comment": "hello serialized"
-            }
-        """;
+        String json = "{\"title\": \"serialized\", \"comment\": \"hello serialized\"}";
         Post post = cut.deserialize(json);
         assertEquals("serialized", post.title);
         assertEquals("hello serialized",post.comment);

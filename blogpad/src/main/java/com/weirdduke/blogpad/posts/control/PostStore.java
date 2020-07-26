@@ -26,9 +26,13 @@ public class PostStore {
         this.storageDirectoryPath = Path.of(storageDir);
     }
 
-    public void save(final @NotNull Post post) throws Exception {
-        String stringified = serialize(post);
-        write(post.title, stringified);
+    public void save(final @NotNull Post post) {
+        try {
+            String stringified = serialize(post);
+            write(post.title, stringified);
+        } catch (Exception exception) {
+            throw new IllegalStateException("Failed to save " + post.title);
+        }
     }
 
     public Post read(final @NotNull String title) throws  Exception{
