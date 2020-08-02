@@ -26,10 +26,14 @@ public class PostStore {
         this.storageDirectoryPath = Path.of(storageDir);
     }
 
-    public void save(final @NotNull Post post) {
+    public Post save(final @NotNull Post post) {
         try {
             var stringified = serialize(post);
-            write(post.title, stringified);
+            var fileName = normalize(post.title);
+            System.out.println(fileName);
+            post.fileName = fileName;
+            write(fileName, stringified);
+            return post;
         } catch (Exception exception) {
             throw new PostStoreException("Failed to save " + post.title, exception);
         }
@@ -37,7 +41,8 @@ public class PostStore {
 
     public Post read(final @NotNull String title) {
         try {
-            var stringified = readString(title);
+            var normalizedTitle = normalize(title);
+            var stringified = readString(normalizedTitle);
             return deserialize(stringified);
         } catch (Exception exception) {
             throw new PostStoreException("Failed to find " + title + ". ", exception);
@@ -63,6 +68,19 @@ public class PostStore {
     Post deserialize(final @NotNull String stringified) throws Exception {
         try (Jsonb jsonb = create()) {
             return jsonb.fromJson(stringified, Post.class);
+        }
+    }
+
+    private String normalize(String title) {
+        return title.codePoints().map(this::convert)
+                .collect(StringBuffer::new, StringBuffer::appendCodePoint, StringBuffer::append).toString();
+    }
+
+    private int convert(int codePoint) {
+        if (Character.isLetterOrDigit(codePoint)) {
+            return codePoint;
+        } else {
+            return "-".codePoints().findFirst().orElseThrow();
         }
     }
 

@@ -37,7 +37,7 @@ class PostStoreTest {
     }
 
     @Test
-    void shouldDeserializeStringIntoPost() {
+    void shouldDeserializeStringIntoPost() throws Exception {
         var json = "{\"title\": \"serialized\", \"comment\": \"hello serialized\"}";
         var post = cut.deserialize(json);
         assertEquals("serialized", post.title);
