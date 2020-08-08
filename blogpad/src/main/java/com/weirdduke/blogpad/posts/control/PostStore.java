@@ -6,6 +6,7 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.json.bind.Jsonb;
+import javax.json.bind.JsonbBuilder;
 import javax.validation.constraints.NotNull;
 
 import java.io.IOException;
@@ -26,11 +27,13 @@ public class PostStore {
         this.storageDirectoryPath = Path.of(storageDir);
     }
 
-    public Post save(final @NotNull Post post) {
+    public Post create(final @NotNull Post post) {
         try {
             var stringified = serialize(post);
             var fileName = normalize(post.title);
-            System.out.println(fileName);
+            if(fileExists(fileName)) {
+                throw new PostStoreException("Post named " + fileName + "already exists");
+            }
             post.fileName = fileName;
             write(fileName, stringified);
             return post;
@@ -49,6 +52,22 @@ public class PostStore {
         }
     }
 
+    public void update(Post post) {
+        try {
+            var stringified = serialize(post);
+            var fileName = normalize(post.title);
+            post.fileName = fileName;
+            write(fileName, stringified);
+        } catch (Exception exception) {
+            throw new PostStoreException("Failed to save " + post.title, exception);
+        }
+    }
+
+    boolean fileExists(String fileName) {
+        Path pathToPost = storageDirectoryPath.resolve(fileName);
+        return Files.exists(pathToPost);
+    }
+
     void write(final @NotNull String fileName, final @NotNull String content) throws IOException {
         var path = this.storageDirectoryPath.resolve(fileName);
         Files.writeString(path, content);
@@ -60,13 +79,13 @@ public class PostStore {
     }
 
     String serialize(final @NotNull Post post) throws Exception {
-        try (Jsonb jsonb = create()) {
+        try (Jsonb jsonb = JsonbBuilder.create()) {
             return jsonb.toJson(post);
         }
     }
 
     Post deserialize(final @NotNull String stringified) throws Exception {
-        try (Jsonb jsonb = create()) {
+        try (Jsonb jsonb = JsonbBuilder.create()) {
             return jsonb.fromJson(stringified, Post.class);
         }
     }
@@ -83,5 +102,4 @@ public class PostStore {
             return "-".codePoints().findFirst().orElseThrow();
         }
     }
-
 }

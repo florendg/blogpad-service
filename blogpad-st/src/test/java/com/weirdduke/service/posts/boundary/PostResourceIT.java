@@ -32,8 +32,7 @@ public class PostResourceIT {
                 .add("comment", "This is a test")
                 .build();
         Response response = client.savePost(post);
-        assertEquals(201, response.getStatus());
-        assertEquals("http://localhost:8080/blogpad/resources/posts/put-st",response.getHeaderString("Location"));
+        assertEquals(200, response.getStatus());
 
         response = client.findPost(title);
         assertEquals(200, response.getStatus());
@@ -41,12 +40,12 @@ public class PostResourceIT {
 
     @Test
     void shouldNotSaveInvalidPost() {
-        String title = "/";
+        String title = "h/ho";
         JsonObject post = Json.createObjectBuilder()
                 .add("title", title)
                 .add("comment", "This is a test")
                 .build();
         Response response = client.savePost(post);
-        assertEquals(201, response.getStatus());
+        assertEquals(200, response.getStatus());
     }
 }

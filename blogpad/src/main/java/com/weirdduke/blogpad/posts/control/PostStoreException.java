@@ -11,4 +11,10 @@ public class PostStoreException extends WebApplicationException {
                 .header("cause",cause.getMessage())
                 .build());
     }
+
+    public PostStoreException(String message) {
+        super(Response.status(400)
+                .header("message", message)
+                .build());
+    }
 }
