@@ -10,7 +10,11 @@ public interface PostResourceClient {
 
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
-    Response savePost(JsonObject post);
+    Response updatePost(JsonObject post);
+
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    Response createNew(JsonObject post);
 
     @GET
     @Path("{title}")

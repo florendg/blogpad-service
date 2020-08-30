@@ -3,6 +3,8 @@ package com.weirdduke.blogpad.posts.boundary;
 import com.weirdduke.blogpad.posts.control.PostStore;
 import com.weirdduke.blogpad.posts.entity.Post;
 import org.eclipse.microprofile.metrics.annotation.Counted;
+import org.eclipse.microprofile.metrics.annotation.Timed;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
@@ -19,8 +21,13 @@ public class PostResource {
     @Inject
     PostStore store;
 
-    @Counted
+
+    @Timed
     @POST
+    @APIResponse(
+        responseCode = "400",
+        description = "Post with given title already exists. Use PUT for update"
+    )
     @Consumes(MediaType.APPLICATION_JSON)
     public Response save(@Context UriInfo uriInfo,@Valid Post post) {
         Post savedPost =  store.create(post);
