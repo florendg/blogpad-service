@@ -47,7 +47,7 @@ class PostStoreTest {
     @Test
     void shouldSaveAndReadPost()  {
         var expected = new Post("demo","Hello, Duke!");
-        cut.create(expected);
+        cut.createNew(expected);
         var actual = cut.read("demo");
         assertEquals(expected.title,actual.title);
         assertEquals(expected.comment, actual.comment);

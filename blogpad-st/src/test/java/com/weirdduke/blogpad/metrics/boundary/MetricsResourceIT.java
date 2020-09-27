@@ -1,6 +1,8 @@
 package com.weirdduke.blogpad.metrics.boundary;
 
+import com.weirdduke.blogpad.posts.boundary.PostResourceIT;
 import org.eclipse.microprofile.rest.client.RestClientBuilder;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -11,6 +13,13 @@ import static org.junit.jupiter.api.Assertions.*;
 public class MetricsResourceIT {
 
     private MetricsResourceClient client;
+
+    @BeforeAll
+    static void initMetricsWithBusinessCall() {
+        var test = new PostResourceIT();
+        test.init();
+        test.shouldSavePostAndFindItAgain();
+    }
 
     @BeforeEach
     void init() {

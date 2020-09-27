@@ -5,8 +5,7 @@ import org.eclipse.microprofile.health.HealthCheckResponse;
 import org.eclipse.microprofile.health.Readiness;
 
 @Readiness
-public class BlogPadReadiness implements HealthCheck {
-
+public class ReadinessCheck implements HealthCheck {
 
     @Override
     public HealthCheckResponse call() {

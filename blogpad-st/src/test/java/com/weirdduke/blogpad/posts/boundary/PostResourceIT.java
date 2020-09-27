@@ -26,7 +26,7 @@ public class PostResourceIT {
     }
 
     @Test
-    void shouldSavePostAndFindItAgain() {
+    public void shouldSavePostAndFindItAgain() {
         String title = "put_st" + System.currentTimeMillis();
         JsonObject post = Json.createObjectBuilder()
                 .add("title", title)
@@ -37,13 +37,13 @@ public class PostResourceIT {
 
         response = client.findPost(title);
         assertEquals(200, response.getStatus());
-        var fetchedPost  = response.readEntity(JsonObject.class);
-        assertNotNull(fetchedPost.getString("createdAt",null));
-        assertNull(fetchedPost.getString("modifiedAt",null));
+        var fetchedPost = response.readEntity(JsonObject.class);
+        assertNotNull(fetchedPost.getString("createdAt", null));
+        assertNull(fetchedPost.getString("modifiedAt", null));
     }
 
     @Test
-    void shouldNotSaveInvalidPost() {
+    public void shouldNotSaveInvalidPost() {
         String title = "ho";
         JsonObject post = Json.createObjectBuilder()
                 .add("title", title)

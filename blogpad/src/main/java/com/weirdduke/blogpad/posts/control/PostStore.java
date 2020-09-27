@@ -13,6 +13,7 @@ import javax.inject.Inject;
 import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;
 import javax.validation.constraints.NotNull;
+import javax.ws.rs.BadRequestException;
 
 
 import java.io.IOException;
@@ -63,13 +64,13 @@ public class PostStore {
         }
     }
 
-    public Post create(final @NotNull Post post) {
+    public Post createNew(final @NotNull Post post) {
         try {
             post.setCreatedAt();
             var stringified = serialize(post);
             var fileName = normalizer.normalize(post.title);
             if(fileExists(fileName)) {
-                throw new StorageException("Post named " + fileName + "already exists");
+                throw new BadRequestException("Post named " + fileName + "already exists, use PUT for update.");
             }
             post.fileName = fileName;
             write(fileName, stringified);
@@ -90,10 +91,13 @@ public class PostStore {
     }
 
     public void update(Post post) {
+        var fileName =normalizer.normalize(post.title);
+        if(!this.fileExists(fileName)) {
+            throw new BadRequestException("Post with name: " + fileName + " does not exist, Use POST to create.");
+        }
         try {
             post.setModifiedAt();
             var stringified = serialize(post);
-            var fileName = normalizer.normalize(post.title);
             post.fileName = fileName;
             write(fileName, stringified);
         } catch (Exception exception) {
