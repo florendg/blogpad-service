@@ -1,4 +1,4 @@
-package com.weirdduke.service.posts.boundary;
+package com.weirdduke.blogpad.posts.boundary;
 
 import org.eclipse.microprofile.rest.client.RestClientBuilder;
 import org.junit.jupiter.api.BeforeEach;

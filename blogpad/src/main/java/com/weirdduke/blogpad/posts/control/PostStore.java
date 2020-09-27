@@ -19,18 +19,20 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import static javax.json.bind.JsonbBuilder.create;
-
 public class PostStore {
 
     @Inject
     @ConfigProperty(name = "root.storage.dir")
     String storageDir;
+
     Path storageDirectoryPath;
 
     @Inject
     @ConfigProperty(name="root.storage.required.space", defaultValue = "50")
     int requiredSpace;
+
+    @Inject
+    TitleNormalizer normalizer;
 
 
     @PostConstruct
@@ -57,7 +59,7 @@ public class PostStore {
         try {
             return Files.getFileStore(storageDirectoryPath).getUsableSpace() / (1024 * 1024);
         } catch (IOException ioException) {
-            throw new PostStoreException("Could not determine space for " + storageDir );
+            throw new StorageException("Could not determine space for " + storageDir );
         }
     }
 
@@ -65,25 +67,25 @@ public class PostStore {
         try {
             post.setCreatedAt();
             var stringified = serialize(post);
-            var fileName = normalize(post.title);
+            var fileName = normalizer.normalize(post.title);
             if(fileExists(fileName)) {
-                throw new PostStoreException("Post named " + fileName + "already exists");
+                throw new StorageException("Post named " + fileName + "already exists");
             }
             post.fileName = fileName;
             write(fileName, stringified);
             return post;
         } catch (Exception exception) {
-            throw new PostStoreException("Failed to save " + post.title, exception);
+            throw new StorageException("Failed to save " + post.title, exception);
         }
     }
 
     public Post read(final @NotNull String title) {
         try {
-            var normalizedTitle = normalize(title);
+            var normalizedTitle = normalizer.normalize(title);
             var stringified = readString(normalizedTitle);
             return deserialize(stringified);
         } catch (Exception exception) {
-            throw new PostStoreException("Failed to find " + title + ". ", exception);
+            throw new StorageException("Failed to find " + title + ". ", exception);
         }
     }
 
@@ -91,11 +93,11 @@ public class PostStore {
         try {
             post.setModifiedAt();
             var stringified = serialize(post);
-            var fileName = normalize(post.title);
+            var fileName = normalizer.normalize(post.title);
             post.fileName = fileName;
             write(fileName, stringified);
         } catch (Exception exception) {
-            throw new PostStoreException("Failed to save " + post.title, exception);
+            throw new StorageException("Failed to save " + post.title, exception);
         }
     }
 
@@ -123,19 +125,6 @@ public class PostStore {
     Post deserialize(final @NotNull String stringified) throws Exception {
         try (Jsonb jsonb = JsonbBuilder.create()) {
             return jsonb.fromJson(stringified, Post.class);
-        }
-    }
-
-    private String normalize(String title) {
-        return title.codePoints().map(this::convert)
-                .collect(StringBuffer::new, StringBuffer::appendCodePoint, StringBuffer::append).toString();
-    }
-
-    private int convert(int codePoint) {
-        if (Character.isLetterOrDigit(codePoint)) {
-            return codePoint;
-        } else {
-            return "-".codePoints().findFirst().orElseThrow();
         }
     }
 }

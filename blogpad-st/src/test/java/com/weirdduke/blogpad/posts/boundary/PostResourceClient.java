@@ -1,4 +1,4 @@
-package com.weirdduke.service.posts.boundary;
+package com.weirdduke.blogpad.posts.boundary;
 
 import javax.json.JsonObject;
 import javax.ws.rs.*;
