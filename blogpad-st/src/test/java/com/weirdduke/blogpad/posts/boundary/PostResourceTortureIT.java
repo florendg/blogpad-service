@@ -1,5 +1,6 @@
 package com.weirdduke.blogpad.posts.boundary;
 
+import com.weirdduke.blogpad.metrics.boundary.MetricsResourceClient;
 import org.eclipse.microprofile.rest.client.RestClientBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,12 +18,14 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 public class PostResourceTortureIT {
 
     private PostResourceClient client;
     private String title;
     private ExecutorService threadPool;
+    private MetricsResourceClient metricsResourceClient;
 
     @BeforeEach
     void init() {
@@ -32,32 +35,50 @@ public class PostResourceTortureIT {
                 .build(PostResourceClient.class);
         this.title = "torture" + System.currentTimeMillis();
         JsonObject post = Json.createObjectBuilder()
-                .add("title",title)
-                .add("content","for torture").build();
+                .add("title", title)
+                .add("content", "for torture").build();
         Response response = client.createNew(post);
-        assertEquals(201,response.getStatus());
+        assertEquals(201, response.getStatus());
         threadPool = Executors.newFixedThreadPool(20);
+        initMetricsClient();
+    }
+
+    private void initMetricsClient() {
+        this.metricsResourceClient = RestClientBuilder
+                .newBuilder()
+                .baseUri(URI.create("http://localhost:8080"))
+                .build(MetricsResourceClient.class);
     }
 
     @Test
     void startTorture() {
+        assumeTrue(System.getProperty("torture",null) != null);
         List<CompletableFuture<Void>> tasks = Stream.generate(this::runScenarios)
-                .limit(10000)
+                .limit(500)
                 .collect(Collectors.toList());
         tasks.forEach(CompletableFuture::join);
+        verifyPerformance();
     }
 
     CompletableFuture<Void> runScenarios() {
-        return CompletableFuture.runAsync(this::findPost,this.threadPool).thenRunAsync(this::findUnknownPost,this.threadPool);
+        return CompletableFuture.runAsync(this::findPost, this.threadPool).thenRunAsync(this::findUnknownPost, this.threadPool);
     }
 
     void findUnknownPost() {
-        assertThrows(WebApplicationException.class,()->client.findPost("non-existing"+System.nanoTime()));
+        assertThrows(WebApplicationException.class, () -> client.findPost("non-existing" + System.nanoTime()));
     }
 
     void findPost() {
         Response response = client.findPost(title);
         JsonObject post = response.readEntity(JsonObject.class);
         assertNotNull(post);
+    }
+
+    private void verifyPerformance() {
+        JsonObject json = metricsResourceClient.applicationMetrics()
+                .getJsonObject("com.weirdduke.blogpad.posts.boundary.PostResource.findPost");
+        double oneMinRate = json.getJsonNumber("oneMinRate").doubleValue();
+        System.out.println("++++++OneMinRate: "+oneMinRate);
+        assertTrue(oneMinRate > 5);
     }
 }
