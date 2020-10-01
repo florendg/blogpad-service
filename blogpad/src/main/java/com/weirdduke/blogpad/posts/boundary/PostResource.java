@@ -3,8 +3,6 @@ package com.weirdduke.blogpad.posts.boundary;
 import com.weirdduke.blogpad.posts.control.PostStore;
 import com.weirdduke.blogpad.posts.entity.Post;
 import org.eclipse.microprofile.metrics.annotation.Counted;
-import org.eclipse.microprofile.metrics.annotation.Metered;
-import org.eclipse.microprofile.metrics.annotation.SimplyTimed;
 import org.eclipse.microprofile.metrics.annotation.Timed;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 

@@ -29,7 +29,7 @@ public class PostStore {
     Path storageDirectoryPath;
 
     @Inject
-    @ConfigProperty(name="root.storage.required.space", defaultValue = "50")
+    @ConfigProperty(name = "root.storage.required.space", defaultValue = "50")
     int requiredSpace;
 
     @Inject
@@ -55,12 +55,12 @@ public class PostStore {
                 .state(availableSpaceInMegaBytes() > requiredSpace).build();
     }
 
-    @Gauge(unit = "mb", name="space-for-posts",absolute = true )
+    @Gauge(unit = "mb", name = "space-for-posts", absolute = true)
     public long availableSpaceInMegaBytes() {
         try {
             return Files.getFileStore(storageDirectoryPath).getUsableSpace() / (1024 * 1024);
         } catch (IOException ioException) {
-            throw new StorageException("Could not determine space for " + storageDir );
+            throw new StorageException("Could not determine space for " + storageDir);
         }
     }
 
@@ -69,7 +69,7 @@ public class PostStore {
             post.setCreatedAt();
             var stringified = serialize(post);
             var fileName = normalizer.normalize(post.title);
-            if(fileExists(fileName)) {
+            if (fileExists(fileName)) {
                 throw new BadRequestException("Post named " + fileName + "already exists, use PUT for update.");
             }
             post.fileName = fileName;
@@ -83,6 +83,9 @@ public class PostStore {
     public Post read(final @NotNull String title) {
         try {
             var normalizedTitle = normalizer.normalize(title);
+            if (!fileExists(normalizedTitle)) {
+                return null;
+            }
             var stringified = readString(normalizedTitle);
             return deserialize(stringified);
         } catch (Exception exception) {
@@ -91,8 +94,8 @@ public class PostStore {
     }
 
     public void update(Post post) {
-        var fileName =normalizer.normalize(post.title);
-        if(!this.fileExists(fileName)) {
+        var fileName = normalizer.normalize(post.title);
+        if (!this.fileExists(fileName)) {
             throw new BadRequestException("Post with name: " + fileName + " does not exist, Use POST to create.");
         }
         try {

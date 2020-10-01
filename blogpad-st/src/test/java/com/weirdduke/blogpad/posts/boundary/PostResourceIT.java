@@ -49,8 +49,22 @@ public class PostResourceIT {
                 .add("title", title)
                 .add("comment", "This is a test")
                 .build();
-        //Response response =
         assertEquals("HTTP 400 Bad Request",
                 assertThrows(WebApplicationException.class, () -> client.createNew(post)).getMessage());
+    }
+
+    @Test
+    void unknownTitleShouldYieldStatus204() {
+        String title = "unknown" + System.nanoTime();
+        Response response = client.findPost(title);
+        assertEquals(204,response.getStatus());
+    }
+
+    @Test
+    void shouldFindInitialPost() {
+        Response response = client.findPost("initial");
+        assertEquals(200, response.getStatus());
+        JsonObject post = response.readEntity(JsonObject.class);
+        assertEquals("initial",post.getString("title"));
     }
 }
