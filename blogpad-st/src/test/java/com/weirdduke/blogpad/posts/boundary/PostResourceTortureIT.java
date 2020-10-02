@@ -65,7 +65,8 @@ public class PostResourceTortureIT {
     }
 
     void findUnknownPost() {
-        assertThrows(WebApplicationException.class, () -> client.findPost("non-existing" + System.nanoTime()));
+        Response response = client.findPost("non-existing" + System.nanoTime());
+        assertEquals(204,response.getStatus());
     }
 
     void findPost() {
