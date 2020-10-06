@@ -1,6 +1,7 @@
 # Project exclude paths
-/blogpad/target/
-/blogpad-st/target/
-/target/
+/content/content/target/
+/content/content-st/target/
+/content/target/
 .idea
 *.iml
+wad.jar
