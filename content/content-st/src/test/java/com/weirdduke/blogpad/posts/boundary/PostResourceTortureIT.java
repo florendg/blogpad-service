@@ -29,7 +29,7 @@ public class PostResourceTortureIT {
 
     @BeforeEach
     void init() {
-        var uri = URI.create("http://localhost:8080/blogpad/resources");
+        var uri = URI.create("http://localhost:8080/content/resources");
         this.client = RestClientBuilder.newBuilder()
                 .baseUri(uri)
                 .build(PostResourceClient.class);

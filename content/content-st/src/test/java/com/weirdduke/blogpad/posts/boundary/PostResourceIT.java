@@ -18,7 +18,7 @@ public class PostResourceIT {
 
     @BeforeEach
     public void init() {
-        URI uri = URI.create("http://localhost:8080/blogpad/resources/");
+        URI uri = URI.create("http://localhost:8080/content/resources/");
         this.client = RestClientBuilder.
                 newBuilder().
                 baseUri(uri).
