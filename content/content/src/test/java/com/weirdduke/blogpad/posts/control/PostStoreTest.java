@@ -17,6 +17,7 @@ class PostStoreTest {
     void setup() {
         cut = new PostStore();
         cut.storageDir = "target";
+        cut.normalizer =TitleNormalizerTest.create();
         cut.init();
     }
 
