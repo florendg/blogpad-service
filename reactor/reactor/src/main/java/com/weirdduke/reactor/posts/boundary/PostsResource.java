@@ -1,5 +1,7 @@
 package com.weirdduke.reactor.posts.boundary;
 
+import org.eclipse.microprofile.opentracing.Traced;
+
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -14,6 +16,7 @@ public class PostsResource {
     Reactor reactor;
 
     @GET
+    @Traced
     @Path("{title}")
     @Produces(MediaType.TEXT_HTML)
     public String findPost(@PathParam("title") String title){

@@ -55,7 +55,7 @@ public class PostStore {
                 .state(availableSpaceInMegaBytes() > requiredSpace).build();
     }
 
-    @Gauge(unit = "mb", name = "space-for-posts", absolute = true)
+    //@Gauge(unit = "mb", name = "space-for-posts", absolute = true) Not supported in Wildfly
     public long availableSpaceInMegaBytes() {
         try {
             return Files.getFileStore(storageDirectoryPath).getUsableSpace() / (1024 * 1024);
