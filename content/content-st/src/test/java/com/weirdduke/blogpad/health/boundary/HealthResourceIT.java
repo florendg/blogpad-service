@@ -1,5 +1,6 @@
 package com.weirdduke.blogpad.health.boundary;
 
+import com.weirdduke.blogpad.Configuration;
 import org.eclipse.microprofile.rest.client.RestClientBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,8 +15,9 @@ public class HealthResourceIT {
 
     @BeforeEach
     void init() {
+        var uri = Configuration.getValue("admin.uri");
         client = RestClientBuilder.newBuilder()
-                .baseUri(URI.create("http://localhost:8080"))
+                .baseUri(URI.create(uri))
                 .build(HealthResourceClient.class);
     }
 

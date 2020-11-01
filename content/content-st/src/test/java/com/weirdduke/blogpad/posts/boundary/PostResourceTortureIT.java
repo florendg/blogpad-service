@@ -1,5 +1,6 @@
 package com.weirdduke.blogpad.posts.boundary;
 
+import com.weirdduke.blogpad.Configuration;
 import com.weirdduke.blogpad.metrics.boundary.MetricsResourceClient;
 import org.eclipse.microprofile.rest.client.RestClientBuilder;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,30 +30,31 @@ public class PostResourceTortureIT {
 
     @BeforeEach
     void init() {
-        var uri = URI.create("http://localhost:8080/content/resources");
+        var uri = Configuration.getValue("user.uri");
         this.client = RestClientBuilder.newBuilder()
-                .baseUri(uri)
+                .baseUri(URI.create(uri))
                 .build(PostResourceClient.class);
         this.title = "torture" + System.currentTimeMillis();
-        JsonObject post = Json.createObjectBuilder()
+        var post = Json.createObjectBuilder()
                 .add("title", title)
                 .add("content", "for torture").build();
-        Response response = client.createNew(post);
+        var response = client.createNew(post);
         assertEquals(201, response.getStatus());
         threadPool = Executors.newFixedThreadPool(20);
         initMetricsClient();
     }
 
     private void initMetricsClient() {
+        var uri = Configuration.getValue("admin.uri");
         this.metricsResourceClient = RestClientBuilder
                 .newBuilder()
-                .baseUri(URI.create("http://localhost:8080"))
+                .baseUri(URI.create(uri))
                 .build(MetricsResourceClient.class);
     }
 
     @Test
     void startTorture() {
-        assumeTrue(System.getProperty("torture",null) != null);
+        assumeTrue(Configuration.getBooleanValue("torture"));
         List<CompletableFuture<Void>> tasks = Stream.generate(this::runScenarios)
                 .limit(500)
                 .collect(Collectors.toList());

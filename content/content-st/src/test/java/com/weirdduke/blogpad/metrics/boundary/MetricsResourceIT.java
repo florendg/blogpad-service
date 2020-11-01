@@ -1,5 +1,6 @@
 package com.weirdduke.blogpad.metrics.boundary;
 
+import com.weirdduke.blogpad.Configuration;
 import com.weirdduke.blogpad.posts.boundary.PostResourceIT;
 import org.eclipse.microprofile.rest.client.RestClientBuilder;
 import org.junit.jupiter.api.BeforeAll;
@@ -23,10 +24,10 @@ public class MetricsResourceIT {
 
     @BeforeEach
     void init() {
-        URI uri = URI.create("http://localhost:8080");
+        var uri = Configuration.getValue("admin.uri");
         this.client = RestClientBuilder
                 .newBuilder()
-                .baseUri(uri)
+                .baseUri(URI.create(uri))
                 .build(MetricsResourceClient.class);
     }
 

@@ -1,5 +1,6 @@
 package com.weirdduke.blogpad.posts.boundary;
 
+import com.weirdduke.blogpad.Configuration;
 import org.eclipse.microprofile.rest.client.RestClientBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,10 +19,10 @@ public class PostResourceIT {
 
     @BeforeEach
     public void init() {
-        URI uri = URI.create("http://localhost:8080/content/resources/");
+        var uri = Configuration.getValue("user.uri");
         this.client = RestClientBuilder.
                 newBuilder().
-                baseUri(uri).
+                baseUri(URI.create(uri)).
                 build(PostResourceClient.class);
     }
 
