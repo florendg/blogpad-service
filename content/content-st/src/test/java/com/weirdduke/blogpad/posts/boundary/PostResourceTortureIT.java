@@ -32,7 +32,7 @@ public class PostResourceTortureIT {
     void init() {
         var uri = Configuration.getValue("user.uri");
         this.client = RestClientBuilder.newBuilder()
-                .baseUri(URI.create(uri))
+                .baseUri(uri)
                 .build(PostResourceClient.class);
         this.title = "torture" + System.currentTimeMillis();
         var post = Json.createObjectBuilder()
@@ -48,7 +48,7 @@ public class PostResourceTortureIT {
         var uri = Configuration.getValue("admin.uri");
         this.metricsResourceClient = RestClientBuilder
                 .newBuilder()
-                .baseUri(URI.create(uri))
+                .baseUri(uri)
                 .build(MetricsResourceClient.class);
     }
 

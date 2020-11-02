@@ -6,6 +6,12 @@ services:
     environment:
       - "JAEGER_HOST=jaeger"
       - "CONTENT_MP_REST_URL=http://content:8080/content/resources"
+    healthcheck:
+      test: ["CMD","curl","-f","http://localhost:9990/health"]
+      interval: 5s
+      timeout: 1s
+      retries: 2
+      start_period: 10s
     ports:
       - "8080:8080"
       - "9990:9990"
@@ -14,6 +20,12 @@ services:
     container_name: content
     environment:
       - "JAEGER_HOST=jaeger"
+    healthcheck:
+      test: [ "CMD","curl","-f","http://localhost:9990/health" ]
+      interval: 5s
+      timeout: 1s
+      retries: 2
+      start_period: 10s
     ports:
       - "8081:8080"
       - "9991:9990"

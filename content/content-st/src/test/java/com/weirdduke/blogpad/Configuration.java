@@ -6,9 +6,9 @@ import java.net.URI;
 
 public interface Configuration {
 
-    static String getValue(String key) {
+    static URI getValue(String key) {
         var provider = ConfigProvider.getConfig();
-        return provider.getValue(key, String.class);
+        return provider.getValue(key, URI.class);
     }
 
     static boolean getBooleanValue(String key) {

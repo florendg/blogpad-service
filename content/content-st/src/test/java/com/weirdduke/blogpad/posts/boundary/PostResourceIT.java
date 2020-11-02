@@ -22,7 +22,7 @@ public class PostResourceIT {
         var uri = Configuration.getValue("user.uri");
         this.client = RestClientBuilder.
                 newBuilder().
-                baseUri(URI.create(uri)).
+                baseUri(uri).
                 build(PostResourceClient.class);
     }
 

@@ -17,7 +17,7 @@ public class HealthResourceIT {
     void init() {
         var uri = Configuration.getValue("admin.uri");
         client = RestClientBuilder.newBuilder()
-                .baseUri(URI.create(uri))
+                .baseUri(uri)
                 .build(HealthResourceClient.class);
     }
 
