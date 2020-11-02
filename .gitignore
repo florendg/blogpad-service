@@ -1,6 +1,8 @@
 # Project exclude paths
 /content/content/target/
 /content/content-st/target/
+/reactor/reactor/target/
+/reactor/reactor-st/target/
 /content/target/
 .idea
 *.iml
