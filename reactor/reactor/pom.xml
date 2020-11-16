@@ -31,34 +31,23 @@
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
-                <configuration>
-                    <compilerArgs>
-                        <arg>--enable-preview</arg>
-                    </compilerArgs>
-                </configuration>
             </plugin>
 
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.22.2</version>
-                <configuration>
-                    <argLine>--enable-preview</argLine>
-                </configuration>
             </plugin>
             <plugin>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <version>2.22.2</version>
-                <configuration>
-                    <argLine>--enable-preview</argLine>
-                </configuration>
             </plugin>
         </plugins>
         <finalName>reactor</finalName>
     </build>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>14</maven.compiler.source>
-        <maven.compiler.target>14</maven.compiler.target>
+        <maven.compiler.source>15</maven.compiler.source>
+        <maven.compiler.target>15</maven.compiler.target>
         <failOnMissingWebXml>false</failOnMissingWebXml>
     </properties>
 </project>

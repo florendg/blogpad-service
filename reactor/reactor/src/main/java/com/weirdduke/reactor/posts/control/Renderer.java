@@ -1,7 +1,9 @@
 package com.weirdduke.reactor.posts.control;
 
-import org.eclipse.microprofile.openapi.models.security.SecurityScheme;
+import org.eclipse.microprofile.metrics.MetricRegistry;
+import org.eclipse.microprofile.metrics.annotation.RegistryType;
 import org.graalvm.polyglot.Context;
+import org.graalvm.polyglot.PolyglotException;
 import org.graalvm.polyglot.Source;
 
 import javax.annotation.PostConstruct;
@@ -13,6 +15,9 @@ public class Renderer {
 
     private Source source;
 
+    @RegistryType(type = MetricRegistry.Type.APPLICATION)
+    private MetricRegistry registry;
+
     @PostConstruct
     public void init() {
         try {
@@ -22,7 +27,16 @@ public class Renderer {
         }
     }
 
-    String render(String templateContent, String postContent) {
+    public String render(String templateContent, String postContent) {
+        try {
+            return renderInternal(templateContent, postContent);
+        } catch (PolyglotException pe) {
+            registry.counter("rendering_errors").inc();
+            throw new IllegalStateException("Failed to render response " + pe.getMessage(), pe);
+        }
+    }
+
+    public String renderInternal(String templateContent, String postContent) {
         try (Context jsContext = Context.create("js")) {
             jsContext.eval(source);
             var bindings = jsContext.getBindings("js");

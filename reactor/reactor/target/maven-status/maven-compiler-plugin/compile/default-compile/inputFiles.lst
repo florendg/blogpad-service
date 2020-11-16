@@ -1,5 +1,6 @@
 /Users/florendegier/development/blog/blogpad/reactor/reactor/src/main/java/com/weirdduke/reactor/JAXRSConfiguration.java
 /Users/florendegier/development/blog/blogpad/reactor/reactor/src/main/java/com/weirdduke/reactor/posts/boundary/PostsResource.java
+/Users/florendegier/development/blog/blogpad/reactor/reactor/src/main/java/com/weirdduke/reactor/health/HealthProbe.java
 /Users/florendegier/development/blog/blogpad/reactor/reactor/src/main/java/com/weirdduke/reactor/posts/control/Renderer.java
 /Users/florendegier/development/blog/blogpad/reactor/reactor/src/main/java/com/weirdduke/reactor/posts/boundary/Reactor.java
 /Users/florendegier/development/blog/blogpad/reactor/reactor/src/main/java/com/weirdduke/reactor/posts/control/PostsResourceClient.java
